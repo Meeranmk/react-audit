@@ -30,7 +30,7 @@ const program = new Command();
 
 program
   .name('react-audit')
-  .description('🩺 Audit your React codebase for performance, security, architecture, state & effects, accessibility, and dead code issues.')
+  .description('💻 Audit your React codebase for performance, security, architecture, state & effects, accessibility, and dead code issues.')
   .version(VERSION, '-v, --version', 'Display the version number')
   .argument('[path]', 'Path to the project directory', '.')
   .option('--verbose', 'Show detailed per-file diagnostics', false)
@@ -38,7 +38,7 @@ program
   .action(async (projectPath: string, options: { verbose: boolean; json: boolean }) => {
     if (!options.json) {
       console.log('');
-      console.log(chalk.cyan.bold('  🩺 react-audit') + chalk.dim(` v${VERSION}`));
+      console.log(chalk.cyan.bold('  💻 react-audit') + chalk.dim(` v${VERSION}`));
       console.log(chalk.dim(`  Scanning ${projectPath === '.' ? 'current directory' : projectPath}...`));
       console.log('');
     }
@@ -226,7 +226,7 @@ rulesCommand
   .description('List all available rules')
   .action(() => {
     console.log('');
-    console.log(chalk.cyan.bold(`  🩺 react-audit rules`) + chalk.dim(` · ${getRuleCount()} rules`));
+    console.log(chalk.cyan.bold(`  💻 react-audit rules`) + chalk.dim(` · ${getRuleCount()} rules`));
     console.log('');
 
     const categories = Object.keys(CATEGORY_LABELS) as RuleCategory[];

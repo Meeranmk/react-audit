@@ -1,4 +1,4 @@
-# 🩺 react-audit
+# 💻 react-audit
 
 **A CLI tool that audits React codebases for performance, security, architecture, state & effects, accessibility, and dead code issues — and generates AI-ready fix prompts in one click.**
 
@@ -13,11 +13,11 @@
 `react-audit` statically analyses your React / TypeScript codebase, scores it 0–100, and tells you exactly what to fix. After every scan it offers an interactive menu that generates a structured **AI agent prompt** — ready to paste into Claude, ChatGPT, Cursor, or any other agent — describing every issue with file locations and fix instructions.
 
 ```
-  🩺 react-audit v1.0.0
+  💻 react-audit v1.0.0
   Scanning current directory...
 
   ╔══════════════════════════════════════════════════╗
-  ║  🩺  react-audit  · my-app                  react  ║
+  ║  💻  react-audit  · my-app                  react  ║
   ╚══════════════════════════════════════════════════╝
 
   Health Score: ██████████████████████░░░░░░░░ 72/100  ⚠️ Needs Work
