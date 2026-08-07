@@ -1,8 +1,8 @@
-# 💻 react-audit
+# 💻 react-code-audit
 
 **A CLI tool that audits React codebases for performance, security, architecture, state & effects, accessibility, and dead code issues — and generates AI-ready fix prompts in one click.**
 
-[![npm version](https://img.shields.io/npm/v/react-audit?color=blue)](https://www.npmjs.com/package/react-audit)
+[![npm version](https://img.shields.io/npm/v/react-code-audit?color=blue)](https://www.npmjs.com/package/react-code-audit)
 [![license](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/built%20with-TypeScript-3178c6)](https://www.typescriptlang.org/)
 
@@ -10,14 +10,14 @@
 
 ## What it does
 
-`react-audit` statically analyses your React / TypeScript codebase, scores it 0–100, and tells you exactly what to fix. After every scan it offers an interactive menu that generates a structured **AI agent prompt** — ready to paste into Claude, ChatGPT, Cursor, or any other agent — describing every issue with file locations and fix instructions.
+`react-code-audit` statically analyses your React / TypeScript codebase, scores it 0–100, and tells you exactly what to fix. After every scan it offers an interactive menu that generates a structured **AI agent prompt** — ready to paste into Claude, ChatGPT, Cursor, or any other agent — describing every issue with file locations and fix instructions.
 
 ```
-  💻 react-audit v1.0.0
+  💻 react-code-audit v1.0.0
   Scanning current directory...
 
   ╔══════════════════════════════════════════════════╗
-  ║  💻  react-audit  · my-app                  react  ║
+  ║  💻  react-code-audit  · my-app             react  ║
   ╚══════════════════════════════════════════════════╝
 
   Health Score: ██████████████████████░░░░░░░░ 72/100  ⚠️ Needs Work
@@ -49,10 +49,10 @@
 
 ```bash
 # Run without installing (recommended)
-npx react-audit
+npx react-code-audit
 
 # Or install globally
-npm install -g react-audit
+npm install -g react-code-audit
 ```
 
 ---
@@ -61,19 +61,19 @@ npm install -g react-audit
 
 ```bash
 # Scan the current directory
-react-audit
+react-code-audit
 
 # Scan a specific project
-react-audit ./path/to/my-app
+react-code-audit ./path/to/my-app
 
 # Show detailed per-file diagnostics
-react-audit --verbose
+react-code-audit --verbose
 
 # Output raw JSON (for CI/CD)
-react-audit --json
+react-code-audit --json
 
 # Show version
-react-audit --version
+react-code-audit --version
 ```
 
 ---
@@ -90,7 +90,7 @@ What would you like to do next? Use arrow-keys. Return to submit.
    Skip
 ```
 
-Select an option and `react-audit` will:
+Select an option and `react-code-audit` will:
 
 1. **Group** all findings by rule (same rule = one fix task)
 2. **Rank** them by severity (errors first, then warnings, then info)
@@ -103,7 +103,7 @@ Paste into any AI agent and it will fix the root causes — not suppress them.
 **Example generated prompt:**
 
 ```
-Review and fix the top 3 react-audit findings in my-app. Leave the rest for a follow-up.
+Review and fix the top 3 react-code-audit findings in my-app. Leave the rest for a follow-up.
 
 1. ERROR Security: Found dangerouslySetInnerHTML usage — this can lead to XSS attacks.
    Replace dangerouslySetInnerHTML with safe alternatives like DOMPurify or sanitize-html.
@@ -125,7 +125,7 @@ Read each file and fix the root cause — don't suppress or silence the rule.
 
 ## Rules Reference
 
-`react-audit` ships with **23 rules** across 6 categories.
+`react-code-audit` ships with **23 rules** across 6 categories.
 
 ### ⚡ Performance (6 rules)
 
@@ -195,10 +195,10 @@ Read each file and fix the root cause — don't suppress or silence the rule.
 
 ```bash
 # List all rules with their category and severity
-react-audit rules list
+react-code-audit rules list
 
 # Get full documentation for a specific rule
-react-audit rules explain no-dangerous-html
+react-code-audit rules explain no-dangerous-html
 ```
 
 ---
@@ -206,7 +206,7 @@ react-audit rules explain no-dangerous-html
 ## JSON output (CI/CD)
 
 ```bash
-react-audit --json > audit-report.json
+react-code-audit --json > audit-report.json
 ```
 
 Output shape:
@@ -238,8 +238,8 @@ Fail CI when the score drops below 50:
 ```yaml
 # .github/workflows/audit.yml
 - name: React Audit
-  run: npx react-audit --json | tee audit.json
-  # react-audit exits with code 1 when score < 50
+  run: npx react-code-audit --json | tee audit.json
+  # react-code-audit exits with code 1 when score < 50
 ```
 
 ---

@@ -28,7 +28,7 @@ export function printReport(result: AuditResult, verbose: boolean = false): void
 
 function printHeader(projectName: string, framework: string): void {
   console.log(chalk.bold('  ╔══════════════════════════════════════════════════╗'));
-  console.log(chalk.bold(`  ║  💻  ${chalk.cyan('react-audit')}  ${chalk.dim(`· ${projectName}`)}${' '.repeat(Math.max(0, 30 - projectName.length - framework.length))}${chalk.dim(framework)}  ║`));
+  console.log(chalk.bold(`  ║  💻  ${chalk.cyan('react-code-audit')}  ${chalk.dim(`· ${projectName}`)}${' '.repeat(Math.max(0, 25 - projectName.length - framework.length))}${chalk.dim(framework)}  ║`));
   console.log(chalk.bold('  ╚══════════════════════════════════════════════════╝'));
   console.log('');
 }
@@ -156,7 +156,7 @@ function printFooter(diagnostics: Diagnostic[], score: number): void {
   }
 
   if (score < 75) {
-    console.log(chalk.dim(`  Run ${chalk.cyan('react-audit --verbose')} for detailed fixes.`));
+    console.log(chalk.dim(`  Run ${chalk.cyan('react-code-audit --verbose')} for detailed fixes.`));
   }
 }
 

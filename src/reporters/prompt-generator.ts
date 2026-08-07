@@ -107,7 +107,7 @@ function buildPrompt(
   const followUpNote = remainingCount > 0 ? ` Leave the rest for a follow-up.` : '';
 
   lines.push(
-    `Review and fix the top ${n} react-audit finding${n !== 1 ? 's' : ''} in ${projectName}.` +
+    `Review and fix the top ${n} react-code-audit finding${n !== 1 ? 's' : ''} in ${projectName}.` +
     followUpNote
   );
   lines.push('');
@@ -140,7 +140,7 @@ function buildPrompt(
   lines.push('');
   lines.push(
     'Verify against the real thing, don\'t assume: confirm each change fixes the issue, ' +
-    'then re-run `npx react-audit --verbose` and check the issue is actually gone before moving on.'
+    'then re-run `npx react-code-audit --verbose` and check the issue is actually gone before moving on.'
   );
   lines.push('');
   lines.push(

@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * react-audit CLI — Audit React codebases for quality issues.
+ * react-code-audit CLI — Audit React codebases for quality issues.
  *
  * Usage:
- *   react-audit [path]              Scan a project directory
- *   react-audit --verbose           Show detailed diagnostics
- *   react-audit --json              Output as JSON
- *   react-audit rules list          List all available rules
- *   react-audit rules explain <name> Explain a specific rule
+ *   react-code-audit [path]              Scan a project directory
+ *   react-code-audit --verbose           Show detailed diagnostics
+ *   react-code-audit --json              Output as JSON
+ *   react-code-audit rules list          List all available rules
+ *   react-code-audit rules explain <name> Explain a specific rule
  */
 
 import { Command } from 'commander';
@@ -29,7 +29,7 @@ const VERSION = '1.0.0';
 const program = new Command();
 
 program
-  .name('react-audit')
+  .name('react-code-audit')
   .description('💻 Audit your React codebase for performance, security, architecture, state & effects, accessibility, and dead code issues.')
   .version(VERSION, '-v, --version', 'Display the version number')
   .argument('[path]', 'Path to the project directory', '.')
@@ -38,7 +38,7 @@ program
   .action(async (projectPath: string, options: { verbose: boolean; json: boolean }) => {
     if (!options.json) {
       console.log('');
-      console.log(chalk.cyan.bold('  💻 react-audit') + chalk.dim(` v${VERSION}`));
+      console.log(chalk.cyan.bold('  💻 react-code-audit') + chalk.dim(` v${VERSION}`));
       console.log(chalk.dim(`  Scanning ${projectPath === '.' ? 'current directory' : projectPath}...`));
       console.log('');
     }
@@ -226,7 +226,7 @@ rulesCommand
   .description('List all available rules')
   .action(() => {
     console.log('');
-    console.log(chalk.cyan.bold(`  💻 react-audit rules`) + chalk.dim(` · ${getRuleCount()} rules`));
+    console.log(chalk.cyan.bold(`  💻 react-code-audit rules`) + chalk.dim(` · ${getRuleCount()} rules`));
     console.log('');
 
     const categories = Object.keys(CATEGORY_LABELS) as RuleCategory[];
@@ -252,7 +252,7 @@ rulesCommand
 
     if (!rule) {
       console.error(chalk.red(`\n  Rule "${ruleName}" not found.`));
-      console.log(chalk.dim(`  Run ${chalk.cyan('react-audit rules list')} to see all available rules.\n`));
+      console.log(chalk.dim(`  Run ${chalk.cyan('react-code-audit rules list')} to see all available rules.\n`));
       process.exit(1);
     }
 
