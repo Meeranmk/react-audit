@@ -1,0 +1,40 @@
+{
+  "name": "react-audit",
+  "version": "1.0.0",
+  "description": "A CLI tool that audits React codebases for performance, security, architecture, state & effects, accessibility, and dead code issues. Returns a 0-100 health score.",
+  "main": "dist/cli.js",
+  "bin": {
+    "react-audit": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "react",
+    "audit",
+    "lint",
+    "performance",
+    "security",
+    "accessibility",
+    "cli",
+    "static-analysis"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@inquirer/select": "^5.2.1",
+    "@typescript-eslint/typescript-estree": "^8.0.0",
+    "chalk": "^4.1.2",
+    "clipboardy": "^2.3.0",
+    "commander": "^12.0.0",
+    "fast-glob": "^3.3.0",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.5.0"
+  }
+}
