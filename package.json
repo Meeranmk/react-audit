@@ -3,10 +3,7 @@
   "version": "1.0.0",
   "description": "A CLI tool that audits React codebases for performance, security, architecture, state & effects, accessibility, and dead code issues. Returns a 0-100 health score.",
   "main": "dist/cli.js",
-  "bin": {
-    "react-code-audit": "./dist/cli.js",
-    "react-audit": "./dist/cli.js"
-  },
+  "bin": "./dist/cli.js",
   "files": [
     "dist",
     "README.md"
