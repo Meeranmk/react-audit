@@ -21,7 +21,7 @@ import { scanProject } from './engine/scanner';
 import { printReport } from './reporters/console-reporter';
 import { printJsonReport } from './reporters/json-reporter';
 import { generateFixPrompt, getRankedGroups, FixGroup } from './reporters/prompt-generator';
-import { getAllRules, getRule, getRulesByCategory, getRuleCount } from './rules';
+import { getRule, getRulesByCategory, getRuleCount } from './rules';
 import { CATEGORY_LABELS, RuleCategory, AuditResult } from './types';
 
 const VERSION = '1.0.0';

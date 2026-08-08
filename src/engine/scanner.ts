@@ -7,7 +7,7 @@ import * as path from 'path';
 import fg from 'fast-glob';
 import { parse } from '@typescript-eslint/typescript-estree';
 import { TSESTree } from '@typescript-eslint/typescript-estree';
-import { AuditConfig, AuditResult, Diagnostic, ProjectMetadata } from '../types';
+import { AuditResult, Diagnostic, ProjectMetadata } from '../types';
 import { loadConfig } from './config-loader';
 import { detectFramework, getProjectName } from './framework-detector';
 import { runRules } from './rule-runner';

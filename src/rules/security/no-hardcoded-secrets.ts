@@ -6,15 +6,6 @@
 import { AST_NODE_TYPES } from '@typescript-eslint/typescript-estree';
 import { RuleModule } from '../../types';
 
-// Patterns that suggest a hardcoded secret
-const SECRET_PATTERNS = [
-  /(?:api[_-]?key|apikey)\s*[:=]\s*['"]/i,
-  /(?:secret[_-]?key|secretkey)\s*[:=]\s*['"]/i,
-  /(?:access[_-]?token|accesstoken)\s*[:=]\s*['"]/i,
-  /(?:auth[_-]?token|authtoken)\s*[:=]\s*['"]/i,
-  /(?:private[_-]?key|privatekey)\s*[:=]\s*['"]/i,
-  /(?:password|passwd|pwd)\s*[:=]\s*['"]/i,
-];
 
 // Known secret prefixes in values
 const SECRET_VALUE_PATTERNS = [

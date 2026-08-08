@@ -5,7 +5,7 @@
 
 import { AST_NODE_TYPES } from '@typescript-eslint/typescript-estree';
 import { RuleModule } from '../../types';
-import { isHookCall, walkAST } from '../../utils/ast-helpers';
+import { isHookCall } from '../../utils/ast-helpers';
 
 const rule: RuleModule = {
   meta: {

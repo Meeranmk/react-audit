@@ -5,7 +5,7 @@
 
 import { AST_NODE_TYPES } from '@typescript-eslint/typescript-estree';
 import { RuleModule } from '../../types';
-import { containsJSX, walkAST } from '../../utils/ast-helpers';
+import { containsJSX } from '../../utils/ast-helpers';
 
 const PROPS_THRESHOLD = 3;
 
