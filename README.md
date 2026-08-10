@@ -72,6 +72,12 @@ react-code-audit --verbose
 # Output raw JSON (for CI/CD)
 react-code-audit --json
 
+# Generate an interactive HTML report dashboard and auto-open in browser
+react-code-audit --html
+
+# Specify a custom HTML report output path
+react-code-audit --html ./reports/audit-report.html
+
 # Show version
 react-code-audit --version
 ```
@@ -241,6 +247,26 @@ Fail CI when the score drops below 50:
   run: npx react-code-audit --json | tee audit.json
   # react-code-audit exits with code 1 when score < 50
 ```
+
+---
+
+## Interactive HTML Report
+
+Generate a self-contained, offline-capable interactive HTML dashboard report:
+
+```bash
+react-code-audit --html
+```
+
+This generates `react-audit-report.html` in your project root and automatically opens it in your default browser.
+
+**Features of the HTML Report:**
+- 🎯 **Health Score Dashboard**: Animated circular SVG score gauge (0–100) with grade badge.
+- 📊 **Category Breakdown**: Progress bars for all 6 categories (*Performance, Security, Architecture, State & Effects, Accessibility, Dead Code*).
+- 🔍 **Interactive Filters & Search**: Real-time filtering by severity, category, or text search across file paths and rules.
+- ↕️ **Sortable Diagnostics Table**: Click table column headers to sort findings by severity, category, rule, or file.
+- 🖨️ **Print & Export Ready**: Clean print stylesheet formatted for PDF generation and team sharing.
+- 📦 **Zero External Dependencies**: Single `.html` file with inlined CSS and JS — works 100% offline without CDN links.
 
 ---
 
