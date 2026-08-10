@@ -16,9 +16,11 @@ import pc from 'picocolors';
 import select from '@inquirer/select';
 import { createSpinner } from './utils/spinner';
 import { writeToClipboard } from './utils/clipboard';
+import { openInBrowser } from './utils/open-browser';
 import { scanProject } from './engine/scanner';
 import { printReport } from './reporters/console-reporter';
 import { printJsonReport } from './reporters/json-reporter';
+import { writeHtmlReport } from './reporters/html-reporter';
 import { generateFixPrompt, getRankedGroups, FixGroup } from './reporters/prompt-generator';
 import { getRule, getRulesByCategory, getRuleCount } from './rules';
 import { CATEGORY_LABELS, RuleCategory, AuditResult } from './types';
@@ -34,15 +36,16 @@ program
   .argument('[path]', 'Path to the project directory', '.')
   .option('--verbose', 'Show detailed per-file diagnostics', false)
   .option('--json', 'Output results as JSON', false)
-  .action(async (projectPath: string, options: { verbose: boolean; json: boolean }) => {
-    if (!options.json) {
+  .option('--html [path]', 'Generate an interactive HTML report (default: react-audit-report.html)')
+  .action(async (projectPath: string, options: { verbose: boolean; json: boolean; html?: boolean | string }) => {
+    if (!options.json && !options.html) {
       console.log('');
       console.log(pc.bold(pc.cyan('  💻 react-code-audit')) + pc.dim(` v${VERSION}`));
       console.log(pc.dim(`  Scanning ${projectPath === '.' ? 'current directory' : projectPath}...`));
       console.log('');
     }
 
-    const spinner = options.json ? null : createSpinner('Analyzing React codebase...', '  ').start();
+    const spinner = (options.json || options.html) ? null : createSpinner('Analyzing React codebase...', '  ').start();
 
     try {
       const result = await scanProject(projectPath, { verbose: options.verbose, json: options.json });
@@ -51,7 +54,17 @@ program
         spinner.succeed(pc.dim(`Scan complete · ${result.metadata.filesScanned} files analyzed in ${result.metadata.scanDuration}ms`));
       }
 
-      if (options.json) {
+      if (options.html) {
+        const outputPath = typeof options.html === 'string' ? options.html : 'react-audit-report.html';
+        const absPath = writeHtmlReport(result, outputPath);
+        console.log('');
+        console.log(pc.bold(pc.cyan('  💻 react-code-audit')) + pc.dim(` v${VERSION}`));
+        console.log('');
+        console.log(pc.green(`  ✔ HTML report generated: ${pc.bold(absPath)}`));
+        console.log(pc.dim('  Opening in your default browser...'));
+        console.log('');
+        openInBrowser(absPath);
+      } else if (options.json) {
         printJsonReport(result);
       } else {
         printReport(result, options.verbose);
