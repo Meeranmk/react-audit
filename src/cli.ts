@@ -25,7 +25,7 @@ import { generateFixPrompt, getRankedGroups, FixGroup } from './reporters/prompt
 import { getRule, getRulesByCategory, getRuleCount } from './rules';
 import { CATEGORY_LABELS, RuleCategory, AuditResult } from './types';
 
-const VERSION = '1.0.2';
+const VERSION = '1.1.0';
 
 const program = new Command();
 
