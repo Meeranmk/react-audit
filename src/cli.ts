@@ -12,11 +12,10 @@
  */
 
 import { Command } from 'commander';
-import chalk from 'chalk';
-import ora from 'ora';
+import pc from 'picocolors';
 import select from '@inquirer/select';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const clipboardy = require('clipboardy') as typeof import('clipboardy');
+import { createSpinner } from './utils/spinner';
+import { writeToClipboard } from './utils/clipboard';
 import { scanProject } from './engine/scanner';
 import { printReport } from './reporters/console-reporter';
 import { printJsonReport } from './reporters/json-reporter';
@@ -24,7 +23,7 @@ import { generateFixPrompt, getRankedGroups, FixGroup } from './reporters/prompt
 import { getRule, getRulesByCategory, getRuleCount } from './rules';
 import { CATEGORY_LABELS, RuleCategory, AuditResult } from './types';
 
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 
 const program = new Command();
 
@@ -38,21 +37,18 @@ program
   .action(async (projectPath: string, options: { verbose: boolean; json: boolean }) => {
     if (!options.json) {
       console.log('');
-      console.log(chalk.cyan.bold('  💻 react-code-audit') + chalk.dim(` v${VERSION}`));
-      console.log(chalk.dim(`  Scanning ${projectPath === '.' ? 'current directory' : projectPath}...`));
+      console.log(pc.bold(pc.cyan('  💻 react-code-audit')) + pc.dim(` v${VERSION}`));
+      console.log(pc.dim(`  Scanning ${projectPath === '.' ? 'current directory' : projectPath}...`));
       console.log('');
     }
 
-    const spinner = options.json ? null : ora({
-      text: 'Analyzing React codebase...',
-      prefixText: '  ',
-    }).start();
+    const spinner = options.json ? null : createSpinner('Analyzing React codebase...', '  ').start();
 
     try {
       const result = await scanProject(projectPath, { verbose: options.verbose, json: options.json });
 
       if (spinner) {
-        spinner.succeed(chalk.dim(`Scan complete · ${result.metadata.filesScanned} files analyzed in ${result.metadata.scanDuration}ms`));
+        spinner.succeed(pc.dim(`Scan complete · ${result.metadata.filesScanned} files analyzed in ${result.metadata.scanDuration}ms`));
       }
 
       if (options.json) {
@@ -71,9 +67,9 @@ program
       }
     } catch (error: any) {
       if (spinner) {
-        spinner.fail(chalk.red('Scan failed'));
+        spinner.fail(pc.red('Scan failed'));
       }
-      console.error(chalk.red(`\n  Error: ${error.message || error}\n`));
+      console.error(pc.red(`\n  Error: ${error.message || error}\n`));
       process.exit(1);
     }
   });
@@ -85,7 +81,7 @@ async function runPromptMenu(result: AuditResult): Promise<void> {
   const totalGroups = groups.length;
 
   console.log('');
-  console.log(chalk.dim('  ─────────────────────────────────────────────'));
+  console.log(pc.dim('  ─────────────────────────────────────────────'));
 
   type MenuChoice =
     | 'top3'
@@ -135,29 +131,23 @@ async function runPromptMenu(result: AuditResult): Promise<void> {
     if (!promptText) return;
   }
 
-  // Copy to clipboard
-  let clipboardOk = false;
-  try {
-    await clipboardy.write(promptText);
-    clipboardOk = true;
-  } catch {
-    // Clipboard not available (e.g. headless CI)
-  }
+  // Copy to clipboard using native helper
+  const clipboardOk = await writeToClipboard(promptText);
 
   // Print the prompt
   console.log('');
-  console.log(chalk.bold('  ── Generated Fix Prompt ' + '─'.repeat(24)));
+  console.log(pc.bold('  ── Generated Fix Prompt ' + '─'.repeat(24)));
   console.log('');
   const indented = promptText.split('\n').map(l => '  ' + l).join('\n');
-  console.log(chalk.white(indented));
+  console.log(pc.white(indented));
   console.log('');
-  console.log(chalk.bold('  ' + '─'.repeat(49)));
+  console.log(pc.bold('  ' + '─'.repeat(49)));
   console.log('');
 
   if (clipboardOk) {
-    console.log(chalk.green('  ✔ Copied to clipboard') + chalk.dim(' — paste into any agent or chat'));
+    console.log(pc.green('  ✔ Copied to clipboard') + pc.dim(' — paste into any agent or chat'));
   } else {
-    console.log(chalk.dim('  (Clipboard not available — copy the text above manually)'));
+    console.log(pc.dim('  (Clipboard not available — copy the text above manually)'));
   }
   console.log('');
 }
@@ -167,7 +157,7 @@ async function pickSpecificIssues(
   groups: FixGroup[]
 ): Promise<string> {
   const severityLabel = (s: string) =>
-    s === 'error' ? chalk.red('ERR') : s === 'warning' ? chalk.yellow('WRN') : chalk.blue('INF');
+    s === 'error' ? pc.red('ERR') : s === 'warning' ? pc.yellow('WRN') : pc.blue('INF');
 
   type RuleChoice = string | 'done' | 'cancel';
 
@@ -175,8 +165,8 @@ async function pickSpecificIssues(
     name: `${severityLabel(g.severity)} ${g.categoryLabel}: ${g.description}${g.count > 1 ? ` (×${g.count})` : ''}`,
     value: g.rule,
   }));
-  ruleChoices.push({ name: chalk.dim('─── Done selecting'), value: 'done' });
-  ruleChoices.push({ name: chalk.dim('Cancel'), value: 'cancel' });
+  ruleChoices.push({ name: pc.dim('─── Done selecting'), value: 'done' });
+  ruleChoices.push({ name: pc.dim('Cancel'), value: 'cancel' });
 
   const selected: string[] = [];
 
@@ -226,7 +216,7 @@ rulesCommand
   .description('List all available rules')
   .action(() => {
     console.log('');
-    console.log(chalk.cyan.bold(`  💻 react-code-audit rules`) + chalk.dim(` · ${getRuleCount()} rules`));
+    console.log(pc.bold(pc.cyan(`  💻 react-code-audit rules`)) + pc.dim(` · ${getRuleCount()} rules`));
     console.log('');
 
     const categories = Object.keys(CATEGORY_LABELS) as RuleCategory[];
@@ -234,11 +224,11 @@ rulesCommand
     for (const category of categories) {
       const rules = getRulesByCategory(category);
       const icon = getCategoryIcon(category);
-      console.log(chalk.bold(`  ${icon} ${CATEGORY_LABELS[category]}`) + chalk.dim(` (${rules.length} rules)`));
+      console.log(pc.bold(`  ${icon} ${CATEGORY_LABELS[category]}`) + pc.dim(` (${rules.length} rules)`));
 
       for (const rule of rules) {
         const severityBadge = getSeverityBadge(rule.meta.severity);
-        console.log(`    ${severityBadge} ${chalk.white(rule.meta.name)}  ${chalk.dim(rule.meta.description)}`);
+        console.log(`    ${severityBadge} ${pc.white(rule.meta.name)}  ${pc.dim(rule.meta.description)}`);
       }
       console.log('');
     }
@@ -251,19 +241,19 @@ rulesCommand
     const rule = getRule(ruleName);
 
     if (!rule) {
-      console.error(chalk.red(`\n  Rule "${ruleName}" not found.`));
-      console.log(chalk.dim(`  Run ${chalk.cyan('react-code-audit rules list')} to see all available rules.\n`));
+      console.error(pc.red(`\n  Rule "${ruleName}" not found.`));
+      console.log(pc.dim(`  Run ${pc.cyan('react-code-audit rules list')} to see all available rules.\n`));
       process.exit(1);
     }
 
     console.log('');
-    console.log(chalk.cyan.bold(`  📖 ${rule.meta.name}`));
+    console.log(pc.bold(pc.cyan(`  📖 ${rule.meta.name}`)));
     console.log('');
-    console.log(`  ${chalk.bold('Category:')}    ${CATEGORY_LABELS[rule.meta.category]}`);
-    console.log(`  ${chalk.bold('Severity:')}    ${getSeverityBadge(rule.meta.severity)} ${rule.meta.severity}`);
-    console.log(`  ${chalk.bold('Description:')} ${rule.meta.description}`);
+    console.log(`  ${pc.bold('Category:')}    ${CATEGORY_LABELS[rule.meta.category]}`);
+    console.log(`  ${pc.bold('Severity:')}    ${getSeverityBadge(rule.meta.severity)} ${rule.meta.severity}`);
+    console.log(`  ${pc.bold('Description:')} ${rule.meta.description}`);
     console.log('');
-    console.log(chalk.bold('  Why?'));
+    console.log(pc.bold('  Why?'));
     console.log(`  ${rule.meta.docs}`);
     console.log('');
   });
@@ -283,14 +273,15 @@ function getCategoryIcon(category: string): string {
 function getSeverityBadge(severity: string): string {
   switch (severity) {
     case 'error':
-      return chalk.bgRed.white.bold(' ERR ');
+      return pc.bgRed(pc.white(pc.bold(' ERR ')));
     case 'warning':
-      return chalk.bgYellow.black.bold(' WRN ');
+      return pc.bgYellow(pc.black(pc.bold(' WRN ')));
     case 'info':
-      return chalk.bgBlue.white.bold(' INF ');
+      return pc.bgBlue(pc.white(pc.bold(' INF ')));
     default:
-      return chalk.dim(' --- ');
+      return pc.dim(' --- ');
   }
 }
 
 program.parse();
+

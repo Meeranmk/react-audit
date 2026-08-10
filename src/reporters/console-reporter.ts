@@ -2,7 +2,7 @@
  * Console reporter — beautiful terminal output for audit results.
  */
 
-import chalk from 'chalk';
+import pc from 'picocolors';
 import { AuditResult, Diagnostic, CategorySummary } from '../types';
 
 const SCORE_BAR_WIDTH = 30;
@@ -27,9 +27,9 @@ export function printReport(result: AuditResult, verbose: boolean = false): void
 }
 
 function printHeader(projectName: string, framework: string): void {
-  console.log(chalk.bold('  ╔══════════════════════════════════════════════════╗'));
-  console.log(chalk.bold(`  ║  💻  ${chalk.cyan('react-code-audit')}  ${chalk.dim(`· ${projectName}`)}${' '.repeat(Math.max(0, 25 - projectName.length - framework.length))}${chalk.dim(framework)}  ║`));
-  console.log(chalk.bold('  ╚══════════════════════════════════════════════════╝'));
+  console.log(pc.bold('  ╔══════════════════════════════════════════════════╗'));
+  console.log(pc.bold(`  ║  💻  ${pc.cyan('react-code-audit')}  ${pc.dim(`· ${projectName}`)}${' '.repeat(Math.max(0, 25 - projectName.length - framework.length))}${pc.dim(framework)}  ║`));
+  console.log(pc.bold('  ╚══════════════════════════════════════════════════╝'));
   console.log('');
 }
 
@@ -37,49 +37,49 @@ function printScoreBar(score: number, grade: string): void {
   const filled = Math.round((score / 100) * SCORE_BAR_WIDTH);
   const empty = SCORE_BAR_WIDTH - filled;
 
-  let scoreColor: chalk.Chalk;
+  let scoreColor: (str: string) => string;
   let gradeEmoji: string;
 
   if (score >= 75) {
-    scoreColor = chalk.green;
+    scoreColor = pc.green;
     gradeEmoji = '✅';
   } else if (score >= 50) {
-    scoreColor = chalk.yellow;
+    scoreColor = pc.yellow;
     gradeEmoji = '⚠️';
   } else {
-    scoreColor = chalk.red;
+    scoreColor = pc.red;
     gradeEmoji = '🔴';
   }
 
-  const bar = scoreColor('█'.repeat(filled)) + chalk.gray('░'.repeat(empty));
-  const scoreText = scoreColor.bold(`${score}`);
-  const gradeText = scoreColor.bold(grade);
+  const bar = scoreColor('█'.repeat(filled)) + pc.gray('░'.repeat(empty));
+  const scoreText = pc.bold(scoreColor(`${score}`));
+  const gradeText = pc.bold(scoreColor(grade));
 
   console.log(`  Health Score: ${bar} ${scoreText}/100  ${gradeEmoji} ${gradeText}`);
   console.log('');
 }
 
 function printMetadata(metadata: any): void {
-  console.log(chalk.dim(`  📁 ${metadata.filesScanned} files scanned · ${metadata.totalLines.toLocaleString()} lines · ${metadata.scanDuration}ms`));
+  console.log(pc.dim(`  📁 ${metadata.filesScanned} files scanned · ${metadata.totalLines.toLocaleString()} lines · ${metadata.scanDuration}ms`));
   console.log('');
 }
 
 function printCategoryBreakdown(categories: CategorySummary[]): void {
-  console.log(chalk.bold('  Category Breakdown'));
-  console.log(chalk.dim('  ─────────────────────────────────────────────'));
+  console.log(pc.bold('  Category Breakdown'));
+  console.log(pc.dim('  ─────────────────────────────────────────────'));
 
   for (const cat of categories) {
     const icon = getCategoryIcon(cat.category);
     const label = cat.label.padEnd(18);
 
     if (cat.total === 0) {
-      console.log(`  ${icon} ${chalk.dim(label)} ${chalk.green('✓ No issues')}`);
+      console.log(`  ${icon} ${pc.dim(label)} ${pc.green('✓ No issues')}`);
     } else {
       const parts: string[] = [];
-      if (cat.errors > 0) parts.push(chalk.red(`${cat.errors} errors`));
-      if (cat.warnings > 0) parts.push(chalk.yellow(`${cat.warnings} warnings`));
-      if (cat.infos > 0) parts.push(chalk.blue(`${cat.infos} info`));
-      console.log(`  ${icon} ${label} ${parts.join(chalk.dim(' · '))}`);
+      if (cat.errors > 0) parts.push(pc.red(`${cat.errors} errors`));
+      if (cat.warnings > 0) parts.push(pc.yellow(`${cat.warnings} warnings`));
+      if (cat.infos > 0) parts.push(pc.blue(`${cat.infos} info`));
+      console.log(`  ${icon} ${label} ${parts.join(pc.dim(' · '))}`);
     }
   }
 
@@ -92,20 +92,20 @@ function printIssueSummary(diagnostics: Diagnostic[]): void {
   const infos = diagnostics.filter((d) => d.severity === 'info');
 
   // Show top 5 most impactful issues
-  console.log(chalk.bold('  Top Issues'));
-  console.log(chalk.dim('  ─────────────────────────────────────────────'));
+  console.log(pc.bold('  Top Issues'));
+  console.log(pc.dim('  ─────────────────────────────────────────────'));
 
   const topIssues = [...errors, ...warnings, ...infos].slice(0, 8);
   for (const issue of topIssues) {
     const icon = getSeverityIcon(issue.severity);
-    const file = chalk.dim(`${issue.file}:${issue.line}`);
+    const file = pc.dim(`${issue.file}:${issue.line}`);
     console.log(`  ${icon} ${issue.message}`);
     console.log(`    ${file}`);
   }
 
   const remaining = diagnostics.length - topIssues.length;
   if (remaining > 0) {
-    console.log(chalk.dim(`  ... and ${remaining} more issues. Use --verbose to see all.`));
+    console.log(pc.dim(`  ... and ${remaining} more issues. Use --verbose to see all.`));
   }
   console.log('');
 }
@@ -119,19 +119,19 @@ function printDetailedIssues(diagnostics: Diagnostic[]): void {
     byFile.set(d.file, existing);
   }
 
-  console.log(chalk.bold('  Detailed Issues'));
-  console.log(chalk.dim('  ─────────────────────────────────────────────'));
+  console.log(pc.bold('  Detailed Issues'));
+  console.log(pc.dim('  ─────────────────────────────────────────────'));
 
   for (const [file, issues] of byFile) {
-    console.log(`  ${chalk.cyan.underline(file)}`);
+    console.log(`  ${pc.underline(pc.cyan(file))}`);
 
     for (const issue of issues.sort((a, b) => a.line - b.line)) {
       const icon = getSeverityIcon(issue.severity);
-      const lineCol = chalk.dim(`L${issue.line}:${issue.column}`);
-      const ruleName = chalk.dim(`(${issue.rule})`);
+      const lineCol = pc.dim(`L${issue.line}:${issue.column}`);
+      const ruleName = pc.dim(`(${issue.rule})`);
       console.log(`    ${icon} ${lineCol}  ${issue.message} ${ruleName}`);
       if (issue.suggestion) {
-        console.log(`      ${chalk.dim('→')} ${chalk.dim.italic(issue.suggestion)}`);
+        console.log(`      ${pc.dim('→')} ${pc.italic(pc.dim(issue.suggestion))}`);
       }
     }
     console.log('');
@@ -143,20 +143,20 @@ function printFooter(diagnostics: Diagnostic[], score: number): void {
   const warnings = diagnostics.filter((d) => d.severity === 'warning').length;
   const infos = diagnostics.filter((d) => d.severity === 'info').length;
 
-  console.log(chalk.dim('  ─────────────────────────────────────────────'));
+  console.log(pc.dim('  ─────────────────────────────────────────────'));
 
   if (diagnostics.length === 0) {
-    console.log(chalk.green.bold('  🎉 No issues found! Your codebase is clean.'));
+    console.log(pc.bold(pc.green('  🎉 No issues found! Your codebase is clean.')));
   } else {
     const parts: string[] = [];
-    if (errors > 0) parts.push(chalk.red.bold(`${errors} errors`));
-    if (warnings > 0) parts.push(chalk.yellow.bold(`${warnings} warnings`));
-    if (infos > 0) parts.push(chalk.blue.bold(`${infos} info`));
-    console.log(`  Found: ${parts.join(chalk.dim(' · '))}`);
+    if (errors > 0) parts.push(pc.bold(pc.red(`${errors} errors`)));
+    if (warnings > 0) parts.push(pc.bold(pc.yellow(`${warnings} warnings`)));
+    if (infos > 0) parts.push(pc.bold(pc.blue(`${infos} info`)));
+    console.log(`  Found: ${parts.join(pc.dim(' · '))}`);
   }
 
   if (score < 75) {
-    console.log(chalk.dim(`  Run ${chalk.cyan('react-code-audit --verbose')} for detailed fixes.`));
+    console.log(pc.dim(`  Run ${pc.cyan('react-code-audit --verbose')} for detailed fixes.`));
   }
 }
 
@@ -175,12 +175,13 @@ function getCategoryIcon(category: string): string {
 function getSeverityIcon(severity: string): string {
   switch (severity) {
     case 'error':
-      return chalk.red('✖');
+      return pc.red('✖');
     case 'warning':
-      return chalk.yellow('⚠');
+      return pc.yellow('⚠');
     case 'info':
-      return chalk.blue('ℹ');
+      return pc.blue('ℹ');
     default:
-      return chalk.dim('·');
+      return pc.dim('·');
   }
 }
+
